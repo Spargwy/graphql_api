@@ -1,4 +1,4 @@
-version: '3.9'
+version: '3'
 
 services:
   web:
@@ -15,18 +15,19 @@ services:
     image: postgres:latest
     container_name: postgres
 
-    volumes: 
-      - data:/var/lib/postgres
     environment: 
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
     
-    ports:
-      - ${DB_PORT_IN_DOCKER}
-
+    networks:
+      - dbmate
     volumes:
       - data:/var/lib/psql
 
+
 volumes:
   data:
+
+networks:
+  dbmate:
