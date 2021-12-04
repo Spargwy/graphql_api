@@ -13,11 +13,11 @@ import (
 func init() {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("load envs error: ", err)
+		panic(err)
 	}
 	err = storage.DBConnect()
 	if err != nil {
-		log.Fatal("db connect error: ", err)
+		panic(err)
 	}
 }
 

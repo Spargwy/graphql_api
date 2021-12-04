@@ -8,5 +8,5 @@ docker-run:
 
 docker-migrate:
 	docker run --rm --network=graphql_api_dbmate -v "$(shell pwd)/db:/db"\
-	 -e DATABASE_URL="postgres://${DB_USER}:${DB_PASSWORD}@postgres/${DB_NAME}?sslmode=${DB_SSLMODE}"\
-		amacneil/dbmate:latest up
+	 -e DATABASE_URL="postgres://postgres:postgres@postgres:5432/products?sslmode=disable"\
+		amacneil/dbmate:latest 

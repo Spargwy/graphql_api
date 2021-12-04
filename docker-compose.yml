@@ -10,18 +10,24 @@ services:
       - .:/app
     depends_on:
       - db
+    networks:
+      - app
 
   db:
-    image: postgres:latest
-    container_name: postgres
-
+    image: postgres:alpine
+    container_name: db
+    env_file:
+      - .env
+    hostname: postgres
     environment: 
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME}
-    
+    ports:
+      - ${DB_PORT_IN_DOCKER}
     networks:
       - dbmate
+      - app
     volumes:
       - data:/var/lib/psql
 
@@ -31,3 +37,4 @@ volumes:
 
 networks:
   dbmate:
+  app: 
