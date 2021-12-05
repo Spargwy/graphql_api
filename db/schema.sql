@@ -58,7 +58,7 @@ CREATE TABLE public.schema_migrations (
 
 CREATE TABLE public.users (
     id integer NOT NULL,
-    name character varying(30)
+    phone character varying(30)
 );
 
 
@@ -130,7 +130,5 @@ ALTER TABLE ONLY public.users
 --
 
 INSERT INTO public.schema_migrations (version) VALUES
-    ('20211203054110'),
-    ('20211203071558'),
-    ('20211203071624'),
-    ('20211203192749');
+    ('20211203194635'),
+    ('20211205065626');

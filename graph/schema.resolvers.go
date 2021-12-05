@@ -11,14 +11,27 @@ import (
 	"log"
 )
 
+var usersCodes = make(map[string]string)
+
 func (r *mutationResolver) RequestSignInCode(ctx context.Context, input model.RequestSignInCodeInput) (*model.ErrorPayload, error) {
-	log.Print("Req not implemented")
-	return nil, nil
+	code := generateRandomCode(4)
+	log.Print(code)
+	usersCodes[input.Phone] = code
+	payload := &model.ErrorPayload{Message: "null"}
+	return payload, nil
 }
 
 func (r *mutationResolver) SignInByCode(ctx context.Context, input model.SignInByCodeInput) (model.SignInOrErrorPayload, error) {
-	log.Print("sign not implemented")
-	return nil, nil
+	if input.Code == usersCodes[input.Phone] {
+		user, err := storage.SelectUserByPhone(input.Phone)
+		if err != nil {
+			log.Print("SelectUserByPhone error: ", err)
+			return nil, err
+		}
+		return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: "123"}, nil
+	} else {
+		return model.ErrorPayload{Message: "Invalid code"}, nil
+	}
 }
 
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {

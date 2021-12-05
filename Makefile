@@ -14,5 +14,8 @@ docker-migrate:
 docker-test-data:
 	docker-compose exec db cat app/seed.sql | psql ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
 
+migrate:
+	dbmate --url ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE} up
+
 local-test-data:
 	cat seed.sql | psql ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
