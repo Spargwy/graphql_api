@@ -15,10 +15,10 @@ services:
 
   db:
     image: postgres:alpine
-    container_name: db
+    container_name: postgres
     env_file:
       - .env
-    hostname: postgres
+    hostname: ${DB_HOST}
     environment: 
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -30,6 +30,7 @@ services:
       - app
     volumes:
       - data:/var/lib/psql
+      - .:/app
 
 
 volumes:
