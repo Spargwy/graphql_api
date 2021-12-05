@@ -1,9 +1,8 @@
 package main
 
 import (
-	"gql_app/graph"
 	"gql_app/graph/generated"
-	"gql_app/storage"
+	"gql_app/graph/resolvers"
 	"log"
 	"net/http"
 	"os"
@@ -20,10 +19,6 @@ func init() {
 	if err != nil {
 		log.Fatal("Cant load envs: ", err)
 	}
-	if err = storage.DBConnect(); err != nil {
-		log.Fatal("Cant connect to DB: ", err)
-	}
-
 }
 
 func main() {
@@ -31,8 +26,16 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-
-	srv := handler.NewDefaultServer(generated.NewExecutableSchema(generated.Config{Resolvers: &graph.Resolver{}}))
+	db, err := resolvers.DBConnect()
+	if err != nil {
+		log.Fatal("Cant connect to db: ", err)
+	}
+	schema := generated.NewExecutableSchema(generated.Config{
+		Resolvers: &resolvers.Resolver{
+			DB: db,
+		},
+	})
+	srv := handler.NewDefaultServer(schema)
 
 	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
 	http.Handle("/query", srv)

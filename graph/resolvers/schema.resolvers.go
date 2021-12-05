@@ -1,4 +1,4 @@
-package graph
+package resolvers
 
 // This file will be automatically regenerated based on the schema, any resolver implementations
 // will be copied through when generating and any unknown code will be moved to the end.
@@ -7,7 +7,6 @@ import (
 	"context"
 	"gql_app/graph/generated"
 	"gql_app/graph/model"
-	"gql_app/storage"
 	"log"
 )
 
@@ -22,21 +21,24 @@ func (r *mutationResolver) RequestSignInCode(ctx context.Context, input model.Re
 }
 
 func (r *mutationResolver) SignInByCode(ctx context.Context, input model.SignInByCodeInput) (model.SignInOrErrorPayload, error) {
-	if input.Code == usersCodes[input.Phone] {
-		user, err := storage.SelectUserByPhone(input.Phone)
-		if err != nil {
-			log.Print("SelectUserByPhone error: ", err)
-			return nil, err
-		}
-		return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: "123"}, nil
-	} else {
+	if input.Code != usersCodes[input.Phone] {
 		return model.ErrorPayload{Message: "Invalid code"}, nil
 	}
+	user, err := r.SelectUserByPhone(input.Phone)
+	if err != nil {
+		log.Print("SelectUserByPhone error: ", err)
+		return nil, err
+	}
+	token, err := generateJWT()
+	if err != nil {
+		return model.ErrorPayload{}, err
+	}
+	return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: token}, nil
 }
 
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
 	var err error
-	r.products, err = storage.SelectProducts()
+	r.products, err = r.SelectProducts()
 	if err != nil {
 		return r.products, err
 	}

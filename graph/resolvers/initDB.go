@@ -1,4 +1,4 @@
-package storage
+package resolvers
 
 import (
 	"context"
@@ -6,12 +6,9 @@ import (
 	"os"
 
 	"github.com/go-pg/pg/v10"
-	_ "github.com/lib/pq"
 )
 
-var DB *pg.DB
-
-func DBConnect() (err error) {
+func DBConnect() (db *pg.DB, err error) {
 	var connString = fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?sslmode=%s",
 		os.Getenv("DB_USER"), os.Getenv("DB_PASSWORD"),
@@ -19,13 +16,13 @@ func DBConnect() (err error) {
 		os.Getenv("DB_SSLMODE"))
 	opt, err := pg.ParseURL(connString)
 	if err != nil {
-		return err
+		return
 	}
-	DB = pg.Connect(opt)
+	db = pg.Connect(opt)
 	ctx := context.Background()
 
-	if err := DB.Ping(ctx); err != nil {
-		return err
+	if err = db.Ping(ctx); err != nil {
+		return
 	}
 	return
 }
