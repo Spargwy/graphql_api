@@ -18,7 +18,6 @@ services:
     container_name: postgres
     env_file:
       - .env
-    hostname: ${DB_HOST}
     environment: 
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}

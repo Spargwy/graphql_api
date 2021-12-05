@@ -131,4 +131,6 @@ ALTER TABLE ONLY public.users
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20211203194635'),
-    ('20211205065626');
+    ('20211205065626'),
+    ('20211205110652'),
+    ('20211205110708');
