@@ -2,6 +2,7 @@ package resolvers
 
 import (
 	"math/rand"
+	"os"
 	"strconv"
 	"time"
 
@@ -16,9 +17,12 @@ func generateRandomCode(length int) (code string) {
 	return code
 }
 
-func generateJWT() (tokenString string, err error) {
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{})
-	var secret []byte
+func generateJWT(userID int) (tokenString string, err error) {
+	var secret = []byte(os.Getenv("SECRET_FOR_JWT"))
+	token := jwt.New(jwt.SigningMethodHS256)
+	claims := token.Claims.(jwt.MapClaims)
+	claims["user_id"] = userID
+
 	tokenString, err = token.SignedString(secret)
 	if err != nil {
 		return

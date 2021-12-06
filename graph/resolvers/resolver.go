@@ -2,8 +2,7 @@ package resolvers
 
 import (
 	"gql_app/graph/model"
-
-	"github.com/go-pg/pg/v10"
+	"gql_app/graph/resolvers/storage"
 )
 
 //go:generate go run github.com/99designs/gqlgen
@@ -13,5 +12,5 @@ import (
 
 type Resolver struct {
 	products []*model.Product
-	DB       *pg.DB
+	storage.Psql
 }

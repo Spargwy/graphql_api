@@ -1,6 +1,7 @@
 package main
 
 import (
+	"gql_app/auth"
 	"gql_app/graph/generated"
 	"gql_app/graph/resolvers"
 	"log"
@@ -9,6 +10,7 @@ import (
 
 	"github.com/99designs/gqlgen/graphql/handler"
 	"github.com/99designs/gqlgen/graphql/playground"
+	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
 )
 
@@ -26,20 +28,24 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-	db, err := resolvers.DBConnect()
+	resolver := &resolvers.Resolver{}
+
+	err := resolver.DBConnect()
 	if err != nil {
 		log.Fatal("Cant connect to db: ", err)
 	}
+	router := chi.NewRouter()
+
+	router.Use(auth.Middleware(resolver.Psql))
+
 	schema := generated.NewExecutableSchema(generated.Config{
-		Resolvers: &resolvers.Resolver{
-			DB: db,
-		},
+		Resolvers: resolver,
 	})
 	srv := handler.NewDefaultServer(schema)
 
-	http.Handle("/", playground.Handler("GraphQL playground", "/query"))
-	http.Handle("/query", srv)
+	router.Handle("/", playground.Handler("GraphQL playground", "/query"))
+	router.Handle("/query", srv)
 
 	log.Printf("connect to http://localhost:%s/ for GraphQL playground", port)
-	log.Fatal(http.ListenAndServe(":"+port, nil))
+	log.Fatal(http.ListenAndServe(":"+port, router))
 }

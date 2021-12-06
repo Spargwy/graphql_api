@@ -5,6 +5,8 @@ package resolvers
 
 import (
 	"context"
+	"fmt"
+	"gql_app/auth"
 	"gql_app/graph/generated"
 	"gql_app/graph/model"
 	"log"
@@ -29,9 +31,9 @@ func (r *mutationResolver) SignInByCode(ctx context.Context, input model.SignInB
 		log.Print("SelectUserByPhone error: ", err)
 		return nil, err
 	}
-	token, err := generateJWT()
+	token, err := generateJWT(user.ID)
 	if err != nil {
-		return model.ErrorPayload{}, err
+		return model.ErrorPayload{Message: err.Error()}, err
 	}
 	return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: token}, nil
 }
@@ -46,8 +48,11 @@ func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) 
 }
 
 func (r *queryResolver) Viewer(ctx context.Context) (*model.Viewer, error) {
-	log.Print("Viewer not implemented")
-	return nil, nil
+	viewer := auth.ForContext(ctx)
+	if viewer == nil {
+		return &model.Viewer{}, fmt.Errorf("viewer is not found")
+	}
+	return viewer, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
