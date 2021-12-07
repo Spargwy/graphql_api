@@ -29,6 +29,8 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
+
+	//resolver and db setup
 	resolver := &resolvers.Resolver{RestClient: twilio.NewRestClient()}
 	err := resolver.DBConnect()
 	if err != nil {
@@ -37,6 +39,7 @@ func main() {
 	defer resolver.DB.Close()
 	router := chi.NewRouter()
 
+	//Middlewre that will be used in authentication and authorization flows
 	router.Use(auth.Middleware(resolver.Psql))
 
 	schema := generated.NewExecutableSchema(generated.Config{
