@@ -6,7 +6,18 @@
 
 # Настройка и запуск:
 ## Настройка:
-- В случае запуска через докер, единственное, что понадобится - это docker и docker-ccompose.
+
+```
+git clone https://github.io/Spargwy/graphql_api
+cd graphql_api
+```
+- Установка make
+
+- В случае запуска через докер, единственное, что понадобится - это docker и docker-ccompose: 
+
+https://docs.docker.com/engine/install/, 
+
+https://docs.docker.com/compose/install/.
 
 Для запуска без докера требуется установка следующих библиотек:
 - Go: https://go.dev/
