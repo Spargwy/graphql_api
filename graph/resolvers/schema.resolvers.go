@@ -12,12 +12,14 @@ import (
 	"log"
 )
 
+//Просто, чтобы не усложнять пока. По-хорошему, конечно, Redis юзать
 var usersCodes = make(map[string]string)
 
 func (r *mutationResolver) RequestSignInCode(ctx context.Context, input model.RequestSignInCodeInput) (*model.ErrorPayload, error) {
-	code := generateRandomCode(4)
-	log.Print(code)
-	usersCodes[input.Phone] = code
+	err := r.SendCode(input.Phone)
+	if err != nil {
+		return &model.ErrorPayload{Message: "Cant send message"}, err
+	}
 	payload := &model.ErrorPayload{Message: "null"}
 	return payload, nil
 }

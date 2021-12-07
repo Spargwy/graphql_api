@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"gql_app/graph/model"
 	"gql_app/graph/resolvers/storage"
-	"log"
 	"net/http"
 	"os"
 
@@ -27,7 +26,6 @@ func Middleware(resolver storage.Psql) func(http.Handler) http.Handler {
 			}
 			token, err := validateToken(r.Header["Authorization"][0])
 			if err != nil {
-				log.Print("Invalid token: ", err)
 				w.WriteHeader(403)
 				return
 			}
@@ -43,7 +41,7 @@ func Middleware(resolver storage.Psql) func(http.Handler) http.Handler {
 				return
 			}
 			viewer.User = &user
-			ctx := context.WithValue(r.Context(), viewerCtxKey, viewer)
+			ctx := context.WithValue(r.Context(), viewerCtxKey, &viewer)
 			r = r.WithContext(ctx)
 			next.ServeHTTP(w, r)
 		})
@@ -51,11 +49,8 @@ func Middleware(resolver storage.Psql) func(http.Handler) http.Handler {
 }
 
 func ForContext(ctx context.Context) *model.Viewer {
-	raw, value := ctx.Value(viewerCtxKey).(model.Viewer)
-	if !value {
-		return nil
-	}
-	return &raw
+	raw, _ := ctx.Value(viewerCtxKey).(*model.Viewer)
+	return raw
 }
 
 func validateToken(authorizationHeader string) (token *jwt.Token, err error) {

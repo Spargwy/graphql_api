@@ -12,6 +12,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/playground"
 	"github.com/go-chi/chi"
 	"github.com/joho/godotenv"
+	"github.com/twilio/twilio-go"
 )
 
 const defaultPort = "8080"
@@ -28,12 +29,12 @@ func main() {
 	if port == "" {
 		port = defaultPort
 	}
-	resolver := &resolvers.Resolver{}
-
+	resolver := &resolvers.Resolver{RestClient: twilio.NewRestClient()}
 	err := resolver.DBConnect()
 	if err != nil {
 		log.Fatal("Cant connect to db: ", err)
 	}
+	defer resolver.DB.Close()
 	router := chi.NewRouter()
 
 	router.Use(auth.Middleware(resolver.Psql))

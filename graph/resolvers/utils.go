@@ -1,12 +1,15 @@
 package resolvers
 
 import (
+	"fmt"
+	"log"
 	"math/rand"
 	"os"
 	"strconv"
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	openapi "github.com/twilio/twilio-go/rest/api/v2010"
 )
 
 func generateRandomCode(length int) (code string) {
@@ -28,4 +31,28 @@ func generateJWT(userID int) (tokenString string, err error) {
 		return
 	}
 	return
+}
+
+func (r *Resolver) SendCode(phoneNumber string) error {
+	code := generateRandomCode(4)
+	if os.Getenv("TEST") == "true" {
+		log.Print(code)
+		usersCodes[phoneNumber] = code
+		return nil
+	}
+	usersCodes[phoneNumber] = code
+	client := r.RestClient
+
+	params := &openapi.CreateMessageParams{}
+	params.SetTo(phoneNumber)
+	params.SetFrom(os.Getenv("TWILIO_PHONE_NUMBER"))
+	params.SetBody(code)
+
+	_, err := client.ApiV2010.CreateMessage(params)
+	if err != nil {
+		fmt.Println(err.Error())
+	} else {
+		fmt.Println("SMS sent successfully!")
+	}
+	return nil
 }

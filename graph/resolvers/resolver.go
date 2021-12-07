@@ -3,6 +3,8 @@ package resolvers
 import (
 	"gql_app/graph/model"
 	"gql_app/graph/resolvers/storage"
+
+	"github.com/twilio/twilio-go"
 )
 
 //go:generate go run github.com/99designs/gqlgen
@@ -13,4 +15,5 @@ import (
 type Resolver struct {
 	products []*model.Product
 	storage.Psql
+	*twilio.RestClient
 }

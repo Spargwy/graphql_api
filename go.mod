@@ -11,6 +11,12 @@ require (
 )
 
 require (
+	github.com/golang/mock v1.6.0 // indirect
+	github.com/pkg/errors v0.9.1 // indirect
+	github.com/twilio/twilio-go v0.18.2 // indirect
+)
+
+require (
 	github.com/agnivade/levenshtein v1.1.0 // indirect
 	github.com/go-chi/chi v1.5.4
 	github.com/go-pg/zerochecker v0.2.0 // indirect
