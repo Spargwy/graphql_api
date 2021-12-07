@@ -12,10 +12,10 @@ docker-migrate:
 		amacneil/dbmate:latest up
 
 docker-test-data:
-	docker-compose exec db psql -f app/seed.sql ${DB_NAME} -U ${DB_USER}
+	docker-compose exec db psql -f app/testDB/seed.sql ${DB_NAME} -U ${DB_USER}
 
 migrate:
 	dbmate --url ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE} up
 
 local-test-data:
-	cat seed.sql | psql ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
+	cat testDB/seed.sql | psql ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
