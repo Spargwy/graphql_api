@@ -25,6 +25,9 @@ https://docs.docker.com/compose/install/.
 - PostgreSQL: https://www.postgresql.org/
 - dbMate: https://github.com/amacneil/dbmate
 
+А также установка зависимостей проекта командой
+```go mod download```
+
 
 В корневой директории представлен файл .env.example. По его подобию необходимо создать .env файл и заменить некоторые параметры вашими собственными. В случае с параметрами, связанными с twilio, требуется создать и настроить аккаунт: https://www.twilio.com/.
 
