@@ -6,7 +6,7 @@ import (
 	"github.com/go-pg/pg/v10"
 )
 
-func (db Psql) Insert(data interface{}) error {
+func (db *Psql) Insert(data interface{}) error {
 	_, err := db.DB.Model(data).OnConflict("(id) do update").Insert()
 	if err != nil {
 		return err
@@ -14,7 +14,7 @@ func (db Psql) Insert(data interface{}) error {
 	return nil
 }
 
-func (db Psql) SelectUserByPhone(phone string) (user model.User, err error) {
+func (db *Psql) SelectUserByPhone(phone string) (user model.User, err error) {
 	err = db.DB.Model(&user).Where("phone=?", phone).Select()
 	if err == pg.ErrNoRows {
 		user.Phone = phone
@@ -28,7 +28,7 @@ func (db Psql) SelectUserByPhone(phone string) (user model.User, err error) {
 	return
 }
 
-func (db Psql) SelectUserByID(userID int) (user model.User, err error) {
+func (db *Psql) SelectUserByID(userID int) (user model.User, err error) {
 	user.ID = userID
 	err = db.DB.Model(&user).WherePK().Select()
 	if err != nil {

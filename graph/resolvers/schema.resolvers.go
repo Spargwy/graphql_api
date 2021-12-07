@@ -12,7 +12,7 @@ import (
 	"log"
 )
 
-//Просто, чтобы не усложнять пока. По-хорошему, конечно, Redis юзать
+//Просто, чтобы не усложнять. По-хорошему, конечно, Redis юзать
 var usersCodes = make(map[string]string)
 
 func (r *mutationResolver) RequestSignInCode(ctx context.Context, input model.RequestSignInCodeInput) (*model.ErrorPayload, error) {
@@ -35,8 +35,9 @@ func (r *mutationResolver) SignInByCode(ctx context.Context, input model.SignInB
 	}
 	token, err := generateJWT(user.ID)
 	if err != nil {
-		return model.ErrorPayload{Message: err.Error()}, err
+		return model.ErrorPayload{Message: "Internal error"}, err
 	}
+	delete(usersCodes, input.Phone)
 	return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: token}, nil
 }
 
