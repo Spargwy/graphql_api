@@ -54,3 +54,6 @@ make docker-test-data
  go build -o server
  ./server
  ```
+
+ Запуск линтера осуществляется с помощью golangci-lint через докер командой
+ ```make lint``` или ```golangci-lint run ./...``` если имеется установленный golangci-lint: https://golangci-lint.run/usage/install/

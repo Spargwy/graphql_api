@@ -19,3 +19,6 @@ migrate:
 
 local-test-data:
 	cat testDB/seed.sql | psql ${DB_DRIVER}://${DB_USER}:${DB_PASSWORD}@localhost:${DB_PORT}/${DB_NAME}?sslmode=${DB_SSLMODE}
+
+lint:
+	docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.43.0 golangci-lint run -v

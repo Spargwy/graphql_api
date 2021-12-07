@@ -12,15 +12,18 @@ import (
 	"log"
 )
 
-//Просто, чтобы не усложнять. По-хорошему, конечно, Redis юзать
+// Просто, чтобы не усложнять. По-хорошему, конечно, Redis юзать
 var usersCodes = make(map[string]string)
 
 func (r *mutationResolver) RequestSignInCode(ctx context.Context, input model.RequestSignInCodeInput) (*model.ErrorPayload, error) {
 	err := r.SendCode(input.Phone)
+
 	if err != nil {
 		return &model.ErrorPayload{Message: "Cant send message"}, err
 	}
+
 	payload := &model.ErrorPayload{Message: "null"}
+
 	return payload, nil
 }
 
@@ -28,25 +31,33 @@ func (r *mutationResolver) SignInByCode(ctx context.Context, input model.SignInB
 	if input.Code != usersCodes[input.Phone] {
 		return model.ErrorPayload{Message: "Invalid code"}, nil
 	}
+
 	user, err := r.SelectUserByPhone(input.Phone)
+
 	if err != nil {
 		log.Print("SelectUserByPhone error: ", err)
 		return nil, err
 	}
+
 	token, err := generateJWT(user.ID)
+
 	if err != nil {
 		return model.ErrorPayload{Message: "Internal error"}, err
 	}
+
 	delete(usersCodes, input.Phone)
+
 	return model.SignInPayload{Viewer: &model.Viewer{User: &user}, Token: token}, nil
 }
 
 func (r *queryResolver) Products(ctx context.Context) ([]*model.Product, error) {
 	var err error
+
 	r.products, err = r.SelectProducts()
 	if err != nil {
 		return r.products, err
 	}
+
 	return r.products, nil
 }
 
@@ -55,6 +66,7 @@ func (r *queryResolver) Viewer(ctx context.Context) (*model.Viewer, error) {
 	if viewer == nil {
 		return &model.Viewer{}, fmt.Errorf("viewer is not found")
 	}
+
 	return viewer, nil
 }
 

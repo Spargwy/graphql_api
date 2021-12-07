@@ -25,21 +25,27 @@ func Middleware(resolver storage.Psql) func(http.Handler) http.Handler {
 				return
 			}
 			token, err := validateToken(r.Header["Authorization"][0])
+
 			if err != nil {
-				w.WriteHeader(403)
+				w.WriteHeader(http.StatusForbidden)
 				return
 			}
+
 			claims, ok := token.Claims.(jwt.MapClaims)
+
 			if !ok || !token.Valid {
-				w.WriteHeader(403)
+				w.WriteHeader(http.StatusForbidden)
 				return
 			}
+
 			var viewer model.Viewer
 			user, err := resolver.SelectUserByID(int(claims["user_id"].(float64)))
+
 			if err != nil {
-				w.WriteHeader(500)
+				w.WriteHeader(http.StatusInternalServerError)
 				return
 			}
+
 			viewer.User = &user
 			ctx := context.WithValue(r.Context(), viewerCtxKey, &viewer)
 			r = r.WithContext(ctx)
@@ -57,14 +63,17 @@ func validateToken(authorizationHeader string) (token *jwt.Token, err error) {
 	if authorizationHeader == "" {
 		return nil, fmt.Errorf("token is empty")
 	}
+
 	token, err = jwt.Parse(authorizationHeader, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("there was an error in parsing")
 		}
 		return []byte(os.Getenv("SECRET_FOR_JWT")), nil
 	})
+
 	if err != nil {
 		return
 	}
+
 	return
 }

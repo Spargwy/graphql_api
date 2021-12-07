@@ -9,5 +9,6 @@ func (db *Psql) SelectProducts() (products []*model.Product, err error) {
 	if err != nil {
 		return
 	}
+
 	return
 }
